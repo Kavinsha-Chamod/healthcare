@@ -5,7 +5,7 @@ import { isAuthenticated, getUserRole } from '../utils/auth';
 const ProtectedRoute = ({ element: Element, allowedRoles, ...rest }) => {
   const role = getUserRole();
 
-  return isAuthenticated() && allowedRoles.includes(role) ? <Element {...rest} /> : <Navigate to="/login" />;
+  return isAuthenticated() && allowedRoles.includes(role) ? <Element {...rest} /> : <Navigate to="/" />;
 };
 
 export default ProtectedRoute;

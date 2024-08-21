@@ -73,14 +73,14 @@ function DoctorLogin() {
         )}
 
         {error && <p className="error">{error}</p>}
-        <button type="submit">{step === 1 ? 'Doctor Login' : 'Verify'}</button>
+        <button type="submit">{step === 1 ? 'Login' : 'Verify'}</button>
       </form>
       {step === 1 && (
-        <a href="/forgot-password" className="forgot-password">
+        <a href="/doctor-forgot-password" className="forgot-password">
           Forgot Password?
         </a>
       )}
-      <a href="/doctor-register" className="register">
+      <a href="/doctor-register" className="forgot-password">
         Don't have an account? Register here
       </a>
     </div>

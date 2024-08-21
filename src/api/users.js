@@ -68,6 +68,8 @@ export const resetPassword = async (email, newPassword) => {
     throw new Error(error.response?.data?.message || 'Password reset failed');
   }
 };
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const sendMFADoctor = async (email, password) => {
   try {
@@ -103,5 +105,32 @@ export const registerDoctor = async (doctorData) => {
   } catch (error) {
     console.error('Error during registration:', error.response?.data); // Debugging line
     throw error.response?.data?.message || 'Registration failed'; // Throwing error message
+  }
+};
+
+export const doctorForgotPassword = async (email) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/auth/doctor-forgot-password`, { email });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error sending OTP');
+  }
+};
+
+export const verifyOtpDoctor = async (email, otp) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/auth/verify-otp-doctor`, { email, otp });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'OTP verification failed');
+  }
+};
+
+export const doctorResetPassword = async (email, newPassword) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/auth/doctor-reset-password`, { email, newPassword });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Password reset failed');
   }
 };

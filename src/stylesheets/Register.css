@@ -50,8 +50,13 @@ button:hover {
 
 .login {
   display: block;
-  text-align: center;
-  margin-top: 1rem;
+  text-align: left;
+  margin-top: 0.5rem;
   color: #007bff;
   cursor: pointer;
+  text-decoration: none;
+}
+
+.login:hover {
+  text-decoration: underline;
 }
