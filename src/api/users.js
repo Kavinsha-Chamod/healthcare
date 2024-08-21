@@ -69,4 +69,39 @@ export const resetPassword = async (email, newPassword) => {
   }
 };
 
+export const sendMFADoctor = async (email, password) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/auth/send-mfa-doctor`, { email, password });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to send MFA code');
+  }
+};
 
+// Example of handling token storage
+export const loginDoctor = async (email, password, mfaCode) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/auth/login-doctor`, { email, password, mfaCode });
+    const { token } = response.data;
+
+    if (token) {
+      localStorage.setItem('token', token); // Store token in localStorage
+    }
+
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Login failed');
+  }
+};
+
+export const registerDoctor = async (doctorData) => {
+  try {
+    console.log('Sending registration request:', doctorData); // Debugging line
+    const response = await axios.post(`${API_BASE_URL}/auth/register-doctor`, doctorData);
+    console.log('Registration successful:', response.data); // Debugging line
+    return response.data; // Returning the response data
+  } catch (error) {
+    console.error('Error during registration:', error.response?.data); // Debugging line
+    throw error.response?.data?.message || 'Registration failed'; // Throwing error message
+  }
+};

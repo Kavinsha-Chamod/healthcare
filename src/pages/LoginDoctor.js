@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login, sendMFA } from '../api/users';
+import { loginDoctor, sendMFADoctor } from '../api/users'; // Ensure this path is correct
 import '../stylesheets/Login.css'; // Import the CSS file
 
-function Login() {
+function DoctorLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mfaCode, setMfaCode] = useState('');
@@ -11,30 +11,32 @@ function Login() {
   const [step, setStep] = useState(1); // Step 1: Login, Step 2: MFA
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleDoctorLogin = async (e) => {
     e.preventDefault();
     try {
-      await sendMFA(email, password);
+      await sendMFADoctor(email, password); // Request MFA code
       setStep(2); // Proceed to MFA step
     } catch (error) {
-      setError('Invalid email or password');
+      setError(error.message || 'Invalid email or password');
     }
   };
 
-  const handleMFA = async (e) => {
+  const handleMFADoctor = async (e) => {
     e.preventDefault();
     try {
-      const data = await login(email, password, mfaCode);
-      navigate('/dashboard'); // Navigate to dashboard after successful MFA
+      const data = await loginDoctor(email, password, mfaCode); // Verify MFA code
+      console.log('Login successful:', data); // Debug output
+      navigate('/doctor-dashboard'); // Navigate to the doctor’s dashboard
+      
     } catch (error) {
-      setError('Invalid MFA code');
+      setError(error.message || 'Invalid MFA code');
     }
   };
 
   return (
     <div className="container">
-      <h2>{step === 1 ? 'Login' : 'Verify MFA'}</h2>
-      <form onSubmit={step === 1 ? handleLogin : handleMFA}>
+      <h2>{step === 1 ? 'Doctor Login' : 'Verify MFA Code'}</h2>
+      <form onSubmit={step === 1 ? handleDoctorLogin : handleMFADoctor}>
         {step === 1 && (
           <>
             <div>
@@ -71,18 +73,18 @@ function Login() {
         )}
 
         {error && <p className="error">{error}</p>}
-        <button type="submit">{step === 1 ? 'Login' : 'Verify'}</button>
+        <button type="submit">{step === 1 ? 'Doctor Login' : 'Verify'}</button>
       </form>
       {step === 1 && (
         <a href="/forgot-password" className="forgot-password">
           Forgot Password?
         </a>
       )}
-        <a href="/register" className="forgot-password">
-         Don't have an account? Register here
-        </a>
+      <a href="/doctor-register" className="register">
+        Don't have an account? Register here
+      </a>
     </div>
   );
 }
 
-export default Login;
+export default DoctorLogin;

@@ -25,3 +25,18 @@ export const isAuthenticated = () => {
     return false;
   }
 };
+
+export const getUserRole = () => {
+  const token = localStorage.getItem('token');
+  
+  if (!token) {
+    return null; // No token found
+  }
+
+  try {
+    const decodedToken = jwtDecode(token);
+    return decodedToken.role; // Assuming the role is in the token payload
+  } catch (error) {
+    return null; // Invalid token
+  }
+};
