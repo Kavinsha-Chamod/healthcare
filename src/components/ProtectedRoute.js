@@ -1,9 +1,11 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { isAuthenticated } from '../utils/auth';
+import { isAuthenticated, getUserRole } from '../utils/auth';
 
-const ProtectedRoute = ({ element: Element, ...rest }) => {
-  return isAuthenticated() ? <Element {...rest} /> : <Navigate to="/login" />;
+const ProtectedRoute = ({ element: Element, allowedRoles, ...rest }) => {
+  const role = getUserRole();
+
+  return isAuthenticated() && allowedRoles.includes(role) ? <Element {...rest} /> : <Navigate to="/" />;
 };
 
 export default ProtectedRoute;

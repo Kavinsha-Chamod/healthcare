@@ -1,8 +1,7 @@
-// src/components/Register.js
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { registerUser } from '../api/users'; // Import the registerUser function
+import { registerUser } from '../api/users';
+import '../stylesheets/Register.css'; // Import the CSS file
 
 function Register() {
   const [firstName, setFirstName] = useState('');
@@ -12,8 +11,8 @@ function Register() {
   const [dob, setDob] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [gender, setGender] = useState('Select');
-  const [role, setRole] = useState('Select');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -29,7 +28,7 @@ function Register() {
         gender,
         email,
         password,
-        role,
+        role : 'patient',
       });
       navigate('/login');
     } catch (error) {
@@ -38,7 +37,7 @@ function Register() {
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Register</h2>
       <form onSubmit={handleRegister}>
         <div>
@@ -78,16 +77,14 @@ function Register() {
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
         <div>
-          <label>Role:</label>
-          <select value={role} onChange={(e) => setRole(e.target.value)} required>
-            <option value="Select">Select</option>
-            <option value="doctor">Doctor</option>
-            <option value="nurse">Nurse</option>
-            <option value="patient">Patient</option>
-          </select>
+          <label>Confirm Password:</label>
+          <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
         </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p className="error">{error}</p>}
         <button type="submit">Register</button>
+        <a href="/login" className="login">
+          Already have an account? Login
+        </a>
       </form>
     </div>
   );

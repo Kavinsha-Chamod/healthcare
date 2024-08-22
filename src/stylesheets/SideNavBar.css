@@ -1,0 +1,51 @@
+/* SideNavBar.css */
+.sidenav {
+  height: 100vh;
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  padding-top: 20px;
+  color: white;
+}
+
+.sidenav h2 {
+  padding-left: 15px;
+  margin-bottom: 20px;
+}
+
+.sidenav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidenav ul li {
+  padding: 10px 15px;
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+.sidenav ul li a {
+  text-decoration: none;
+  color: white;
+  display: block;
+}
+
+.sidenav ul li a:hover {
+  background-color: #575757;
+}
+
+.dashboard-container {
+  display: flex;
+}
+
+.dashboard-content {
+  margin-left: 250px;
+  padding: 20px;
+  width: 100%;
+}
+
+.sidenav ul li:hover {
+  background-color: #575757;
+}
