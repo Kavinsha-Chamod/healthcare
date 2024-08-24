@@ -9,7 +9,7 @@ const SideNavBar = ({ role, setSelectedContent }) => {
         {role === 'doctor' ? (
           <>
             <li onClick={() => setSelectedContent('appointments')}>View Appointments</li>
-            <li onClick={() => setSelectedContent('patients')}>Manage Patients</li>
+            <li onClick={() => setSelectedContent('times')}>Manage Appointment Times</li>
             <li onClick={() => setSelectedContent('treatment-plans')}>Treatment Plans</li>
             <li onClick={() => setSelectedContent('history')}>Patient Medical History</li>
           </>

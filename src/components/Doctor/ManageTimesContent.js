@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ManagePatientsContent = () => {
+const ManageTimesContent = () => {
   return (
     <div>
       <h3>Manage Patients</h3>
@@ -9,4 +9,4 @@ const ManagePatientsContent = () => {
   );
 };
 
-export default ManagePatientsContent;
+export default ManageTimesContent;

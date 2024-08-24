@@ -5,6 +5,7 @@ import MyAppointmentsContent from '../components/Patient/MyAppointmentsContent';
 import MedicalRecordsContent from '../components/Patient/MedicalRecordsContent';
 import BookAppointmentContent from '../components/Patient/BookAppointmentContent';
 import ContactDoctorContent from '../components/Patient/ContactDoctorContent';
+import DoctorList from '../components/Patient/DoctorList';
 
 function PatientDashboard() {
   const [selectedContent, setSelectedContent] = useState('my-appointments'); // Default content
@@ -16,7 +17,7 @@ function PatientDashboard() {
       case 'medical-records':
         return <MedicalRecordsContent />;
       case 'book-appointment':
-        return <BookAppointmentContent />;
+        return <DoctorList />;
       case 'contact-doctor':
         return <ContactDoctorContent />;
       default:

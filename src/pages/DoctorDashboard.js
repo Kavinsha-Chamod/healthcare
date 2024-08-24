@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import SideNavBar from '../components/SideNavBar';
 import AppointmentsContent from '../components/Doctor/AppointmentsContent';
-import ManagePatientsContent from '../components/Doctor/ManagePatientsContent';
+import ManageTimesContent from '../components/Doctor/ManageTimesContent';
 import TreatmentPlansContent from '../components/Doctor/TreatmentPlansContent';
 import MedicalHistoryContent from '../components/Doctor/MedicalHistoryContent';
 
@@ -14,8 +14,8 @@ function DoctorDashboard() {
     switch (selectedContent) {
       case 'appointments':
         return <AppointmentsContent />;
-      case 'patients':
-        return <ManagePatientsContent />;
+      case 'times':
+        return <ManageTimesContent />;
       case 'treatment-plans':
         return <TreatmentPlansContent />;
       case 'history':

@@ -134,3 +134,13 @@ export const doctorResetPassword = async (email, newPassword) => {
     throw new Error(error.response?.data?.message || 'Password reset failed');
   }
 };
+
+export const getAvailableDoctors = async () => {
+  const response = await axios.get(`${API_BASE_URL}/auth/doctors`);
+  return response.data;
+};
+
+export const getDoctorAvailability = async (doctorId) => {
+  const response = await axios.get(`${API_BASE_URL}/auth/doctors/${doctorId}/availability`);
+  return response.data;
+};
