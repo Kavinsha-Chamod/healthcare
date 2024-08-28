@@ -1,35 +1,44 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginDoctor, sendMFADoctor } from '../api/users'; // Ensure this path is correct
-import '../stylesheets/Login.css'; // Import the CSS file
+import { loginDoctor, sendMFADoctor } from '../api/users';
+import { Button, Input, Alert} from 'antd';
+import '../stylesheets/Login.css'; 
 
-function DoctorLogin() {
+const DoctorLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mfaCode, setMfaCode] = useState('');
   const [error, setError] = useState('');
-  const [step, setStep] = useState(1); // Step 1: Login, Step 2: MFA
+  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1); 
   const navigate = useNavigate();
 
   const handleDoctorLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      await sendMFADoctor(email, password); // Request MFA code
-      setStep(2); // Proceed to MFA step
+      await sendMFADoctor(email, password); 
+      setStep(2); 
+      setError(''); 
     } catch (error) {
       setError(error.message || 'Invalid email or password');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleMFADoctor = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const data = await loginDoctor(email, password, mfaCode); // Verify MFA code
-      console.log('Login successful:', data); // Debug output
-      navigate('/doctor-dashboard'); // Navigate to the doctor’s dashboard
-      
+      const data = await loginDoctor(email, password, mfaCode); 
+      console.log('Login successful:', data); 
+      navigate('/doctor-dashboard'); 
+      setError(''); 
     } catch (error) {
       setError(error.message || 'Invalid MFA code');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,7 +50,7 @@ function DoctorLogin() {
           <>
             <div>
               <label>Email:</label>
-              <input
+              <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -50,8 +59,7 @@ function DoctorLogin() {
             </div>
             <div>
               <label>Password:</label>
-              <input
-                type="password"
+              <Input.Password
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -63,7 +71,7 @@ function DoctorLogin() {
         {step === 2 && (
           <div>
             <label>MFA Code:</label>
-            <input
+            <Input
               type="text"
               value={mfaCode}
               onChange={(e) => setMfaCode(e.target.value)}
@@ -72,8 +80,10 @@ function DoctorLogin() {
           </div>
         )}
 
-        {error && <p className="error">{error}</p>}
-        <button type="submit">{step === 1 ? 'Login' : 'Verify'}</button>
+        {error && <Alert message={error} type="error" showIcon />}
+        <Button type="primary" htmlType="submit" loading={loading}>
+          {step === 1 ? 'Login' : 'Verify'}
+        </Button>
       </form>
       {step === 1 && (
         <a href="/doctor-forgot-password" className="forgot-password">
@@ -85,6 +95,6 @@ function DoctorLogin() {
       </a>
     </div>
   );
-}
+};
 
 export default DoctorLogin;

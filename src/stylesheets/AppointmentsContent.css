@@ -1,0 +1,75 @@
+/* AppointmentsContent.css */
+
+.appointments-container {
+  padding: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.appointments-container h3 {
+  text-align: center;
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.appointments-list {
+  list-style: none;
+  padding: 0;
+}
+
+.appointments-list li {
+  background-color: #fff;
+  padding: 15px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  transition: box-shadow 0.3s;
+}
+
+.appointments-list li:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-info {
+  margin-bottom: 10px;
+}
+
+.appointment-info p {
+  margin: 0;
+  color: #555;
+}
+
+.select-status {
+  display: inline-block;
+  width: 150px;
+}
+
+.update-btn {
+  margin-left: 10px;
+}
+
+.no-appointments {
+  text-align: center;
+  font-size: 18px;
+  color: #888;
+}
+
+.ant-select, .ant-btn {
+  margin-top: 10px;
+}
+
+.ant-btn-primary {
+  background-color: #1890ff;
+  border-color: #1890ff;
+}
+
+.ant-btn-primary:hover {
+  background-color: #40a9ff;
+  border-color: #40a9ff;
+}
+.btn{
+margin-right: 10px;
+}
