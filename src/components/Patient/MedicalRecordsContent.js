@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Spin } from 'antd';
 import {jwtDecode} from 'jwt-decode';
-import { getAppointments } from '../../api/appointment'; // Adjust import path as needed
+import { getAppointments } from '../../api/appointment'; 
+import '../../stylesheets/AppointmentsContent.css';
 
 
 const MedicalRecordsContent = () => {
@@ -66,23 +67,25 @@ const MedicalRecordsContent = () => {
   const filteredAppointments = appointments.filter(appointment => appointment.status == 'completed');
 
   return (
-    <div>
+    <div className="appointments-container">
       <h3>My Appointments</h3>
       {filteredAppointments.length > 0 ? (
-        <ul>
+        <ul className="appointments-list">
           {filteredAppointments.map((appointment) => (
             <li key={appointment._id}>
+            <div className="appointment-info">
               <p>Appointment ID: {appointment._id}</p>
               <p>Date: {new Date(appointment.date).toLocaleDateString()}</p>
               <p>Time: {appointment.time}</p>
               <p>Doctor: {appointment.doctor?.fullName}</p>
               <p>Status: {appointment.status}</p>
               <p>Notes: {appointment.notes}</p>
+            </div>
             </li>
           ))}
         </ul>
       ) : (
-        <p>No appointments found.</p>
+        <p className="no-appointments">No appointments found.</p>
       )}
     </div>
   );

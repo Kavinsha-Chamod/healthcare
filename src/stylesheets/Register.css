@@ -18,6 +18,10 @@ form {
   gap: 1rem;
 }
 
+.txtLabel {
+  width: 96%;
+ }
+
 label {
   font-weight: bold;
 }
@@ -28,26 +32,6 @@ input, select {
   border: 1px solid #ddd;
   border-radius: 4px;
 }
-
-button {
-  background-color: #007bff;
-  color: white;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-.error {
-  color: red;
-  text-align: center;
-}
-
 .login {
   display: block;
   text-align: left;

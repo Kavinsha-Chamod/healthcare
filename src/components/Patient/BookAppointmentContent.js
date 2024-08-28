@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Spin } from 'antd';
+import { Button, Alert, Spin } from 'antd';
 import { createAppointment, bookSlot } from '../../api/appointment';
 import { getDoctorAvailability } from '../../api/users';
 import {jwtDecode} from 'jwt-decode';
@@ -15,7 +15,7 @@ const BookAppointmentContent = ({ doctorId }) => {
     doctor: doctorId,
     date: '',
     time: '',
-    status: 'pending',
+    status: 'confirmed',
     notes: '',
   });
 
@@ -100,7 +100,7 @@ const BookAppointmentContent = ({ doctorId }) => {
         doctor: doctorId,
         date: '',
         time: '',
-        status: 'pending',
+        status: 'confirmed',
         notes: '',
       });
       setSelectedDate('');
@@ -127,7 +127,7 @@ const BookAppointmentContent = ({ doctorId }) => {
         />
       )}
 
-      {loading && <Spin tip="Creating appointment..." />}
+      {/* {loading && <Spin tip="Creating appointment..." />} */}
 
       {!loading && (
         <form onSubmit={handleSubmit}>
@@ -158,8 +158,9 @@ const BookAppointmentContent = ({ doctorId }) => {
             placeholder="Description"
             required
           />
-          
-          <button type="submit" disabled={!appointmentData.time}>Create Appointment</button>
+          <Button type="primary"
+          htmlType="submit"
+          loading={loading}  disabled={!appointmentData.time}>Create Appointment</Button>
         </form>
       )}
     </div>

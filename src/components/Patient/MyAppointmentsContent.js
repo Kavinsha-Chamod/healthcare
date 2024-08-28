@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button, Input, DatePicker, Alert, Spin } from 'antd';
-import {jwtDecode} from 'jwt-decode';
+import { Modal, Button, Input, DatePicker, Alert, Spin, message } from 'antd';
+import {jwtDecode} from 'jwt-decode'; // Import jwtDecode correctly
 import { getAppointments, updateAppointment, deleteAppointment } from '../../api/appointment'; 
 import { getDoctorAvailability } from '../../api/users';
 import moment from 'moment';
+import '../../stylesheets/AppointmentsContent.css';
 
 const MyAppointmentsContent = () => {
   const [appointments, setAppointments] = useState([]);
@@ -106,34 +107,41 @@ const MyAppointmentsContent = () => {
   const handleUpdateSubmit = async () => {
     try {
       const updatedData = {
-        date: formData.date ? formData.date.format('YYYY-MM-DD') : editAppointment.date, // still format the date
-        time: formData.time || editAppointment.time, // time is already a string, no need to format
+        date: formData.date ? formData.date.format('YYYY-MM-DD') : editAppointment.date,
+        time: formData.time || editAppointment.time,
         notes: formData.notes || editAppointment.notes,
       };
       
       await updateAppointment(editAppointment._id, updatedData);
-      alert('Appointment updated successfully');
+      message.success('Appointment updated successfully');
   
       // Refetch appointments after update
       const updatedAppointments = await getAppointments(userId);
       setAppointments(updatedAppointments);
-      setIsModalVisible(false); // Close modal after updating
+      setIsModalVisible(false);
     } catch (error) {
       console.error('Error updating appointment:', error);
     }
   };
-  
 
-  // Handle appointment delete
-  const handleDeleteAppointment = async (appointmentId) => {
-    try {
-      await deleteAppointment(appointmentId);
-      alert('Appointment deleted successfully');
-      const updatedAppointments = await getAppointments(userId);
-      setAppointments(updatedAppointments);
-    } catch (error) {
-      console.error('Error deleting appointment:', error);
-    }
+  // Handle appointment delete with confirmation
+  const handleDeleteAppointment = (appointmentId) => {
+    Modal.confirm({
+      title: 'Are you sure you want to cancel this appointment?',
+      content: 'Once cancelleed, the appointment cannot be recovered.',
+      okText: 'Yes, Cancel',
+      cancelText: 'No',
+      onOk: async () => {
+        try {
+          await deleteAppointment(appointmentId);
+          message.success('Appointment cancelled successfully');
+          const updatedAppointments = await getAppointments(userId);
+          setAppointments(updatedAppointments);
+        } catch (error) {
+          console.error('Error canceling appointment:', error);
+        }
+      },
+    });
   };
 
   if (loading) {
@@ -148,66 +156,67 @@ const MyAppointmentsContent = () => {
   const filteredAppointments = appointments.filter(appointment => appointment.status !== 'completed');
 
   return (
-    <div>
+    <div className="appointments-container">
       <h3>My Appointments</h3>
       {filteredAppointments.length > 0 ? (
-        <ul>
+        <ul className="appointments-list">
           {filteredAppointments.map((appointment) => (
             <li key={appointment._id}>
-              <p>Appointment ID: {appointment._id}</p>
-              <p>Date: {new Date(appointment.date).toLocaleDateString()}</p>
-              <p>Time: {appointment.time}</p>
-              <p>Doctor: {appointment.doctor?.fullName}</p>
-              <p>Status: {appointment.status}</p>
-              <p>Notes: {appointment.notes}</p>
-              <Button onClick={() => handleEditAppointment(appointment)}>Edit</Button>
-              <Button onClick={() => handleDeleteAppointment(appointment._id)} danger>Delete</Button>
+              <div className="appointment-info">
+                <p>Appointment ID: {appointment._id}</p>
+                <p>Date: {new Date(appointment.date).toLocaleDateString()}</p>
+                <p>Time: {appointment.time}</p>
+                <p>Doctor: {appointment.doctor?.fullName}</p>
+                <p>Status: {appointment.status}</p>
+                <p>Notes: {appointment.notes}</p>
+                <Button className='btn' onClick={() => handleEditAppointment(appointment)}>Edit</Button>
+                <Button onClick={() => handleDeleteAppointment(appointment._id)} danger>Cancel</Button>
+              </div>
             </li>
           ))}
         </ul>
       ) : (
-        <p>No appointments found.</p>
+        <p className='no-appointments'>No appointments found.</p>
       )}
 
       {/* Modal for Editing Appointment */}
       <Modal
-  title="Edit Appointment"
-  visible={isModalVisible}
-  onOk={handleUpdateSubmit}
-  onCancel={() => setIsModalVisible(false)}
-  okText="Update"
->
-  <label>Date</label>
-  <DatePicker
-    value={formData.date}
-    onChange={handleDateChange}
-    style={{ width: '100%', marginBottom: '10px' }}
-  />
+        title="Edit Appointment"
+        visible={isModalVisible}
+        onOk={handleUpdateSubmit}
+        onCancel={() => setIsModalVisible(false)}
+        okText="Update"
+      >
+        <label>Date</label>
+        <DatePicker
+          value={formData.date}
+          onChange={handleDateChange}
+          style={{ width: '100%', marginBottom: '10px' }}
+        />
 
-  <label>Time</label>
-  <select name="time" value={formData.time} onChange={e => handleTimeChange(e.target.value)}>
-  <option value="">Select Time</option>
-  {availableTimes.length > 0 ? (
-    availableTimes.map(slot => (
-      <option key={slot._id} value={slot.time}>
-        {slot.time}
-      </option>
-    ))
-  ) : (
-    <option disabled>No available slots</option>
-  )}
-</select>
+        <label>Time</label>
+        <select name="time" value={formData.time} onChange={e => handleTimeChange(e.target.value)}>
+          <option value="">Select Time</option>
+          {availableTimes.length > 0 ? (
+            availableTimes.map(slot => (
+              <option key={slot._id} value={slot.time}>
+                {slot.time}
+              </option>
+            ))
+          ) : (
+            <option disabled>No available slots</option>
+          )}
+        </select>
 
-  <label>Notes</label>
-  <Input.TextArea
-    name="notes"
-    value={formData.notes}
-    onChange={handleInputChange}
-    rows={4}
-    style={{ width: '100%' }}
-  />
-</Modal>
-
+        <label>Notes</label>
+        <Input.TextArea
+          name="notes"
+          value={formData.notes}
+          onChange={handleInputChange}
+          rows={4}
+          style={{ width: '100%' }}
+        />
+      </Modal>
     </div>
   );
 };

@@ -39,8 +39,26 @@
   border-radius: 4px;
 }
 
+.sidenav-buttonL {
+  background: none;
+  background-color: #fcd0d0;
+  border: none;
+  color: #333;
+  font-size: 1rem;
+  text-align: left;
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.sidenav-buttonL:hover {
+  background-color: #f84f4f; 
+  color: #ffffff;
+}
+
 .sidenav-button:hover {
-  background-color: #ddd; /* Change background on hover */
+  background-color: #ddd; 
 }
 
 .dashboard-container {

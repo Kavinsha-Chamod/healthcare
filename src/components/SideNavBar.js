@@ -1,37 +1,29 @@
-// import React from 'react';
-// import '../stylesheets/SideNavBar.css';
-
-// const SideNavBar = ({ role, setSelectedContent }) => {
-//   return (
-//     <div className="sidenav">
-//       <h2>{role === 'doctor' ? 'Doctor Dashboard' : 'Patient Dashboard'}</h2>
-//       <ul>
-//         {role === 'doctor' ? (
-//           <>
-//             <li onClick={() => setSelectedContent('appointments')}>View Appointments</li>
-//             <li onClick={() => setSelectedContent('times')}>Manage Appointment Times</li>
-//             <li onClick={() => setSelectedContent('treatment-plans')}>Treatment Plans</li>
-//             <li onClick={() => setSelectedContent('history')}>Patient Medical History</li>
-//           </>
-//         ) : (
-//           <>
-//             <li onClick={() => setSelectedContent('my-appointments')}>My Appointments</li>
-//             <li onClick={() => setSelectedContent('medical-records')}>Medical Records</li>
-//             <li onClick={() => setSelectedContent('book-appointment')}>Book Appointment</li>
-//             <li onClick={() => setSelectedContent('contact-doctor')}>Contact Doctor</li>
-//           </>
-//         )}
-//       </ul>
-//     </div>
-//   );
-// };
-
-// export default SideNavBar;
-
 import React from 'react';
 import '../stylesheets/SideNavBar.css';
+import { Modal, message } from 'antd';
 
 const SideNavBar = ({ role, setSelectedContent }) => {
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.reload();
+  }
+
+  const handleLogoutUser = (appointmentId) => {
+    Modal.confirm({
+      title: 'Are you sure you want to logout?',
+      okText: 'Yes, Logout',
+      cancelText: 'No',
+      onOk: async () => {
+        try {
+          await handleLogout();
+          message.success('Appointment cancelled successfully');
+        } catch (error) {
+          console.error('Try again!:', error);
+        }
+      },
+    });
+  };
+
   return (
     <div className="sidenav">
       <h2 className="sidenav-title">
@@ -55,11 +47,11 @@ const SideNavBar = ({ role, setSelectedContent }) => {
               Appointment History
               </button>
             </li>
-            {/* <li className="sidenav-item">
-              <button className="sidenav-button" onClick={() => setSelectedContent('history')}>
-                Patient Medical History
+            <li className="sidenav-item">
+              <button className="sidenav-buttonL" onClick={() => handleLogoutUser()}>
+                Logout
               </button>
-            </li> */}
+            </li>
           </>
         ) : (
           <>
@@ -78,11 +70,11 @@ const SideNavBar = ({ role, setSelectedContent }) => {
                 Book Appointment
               </button>
             </li>
-            {/* <li className="sidenav-item">
-              <button className="sidenav-button" onClick={() => setSelectedContent('contact-doctor')}>
-                Contact Doctor
+            <li className="sidenav-item">
+              <button className="sidenav-buttonL" onClick={() => handleLogoutUser()}>
+                Logout
               </button>
-            </li> */}
+            </li>
           </>
         )}
       </ul>
