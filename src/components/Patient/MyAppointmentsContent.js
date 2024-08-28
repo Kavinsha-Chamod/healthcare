@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button, Input, DatePicker, TimePicker, Alert, Spin } from 'antd';
+import { Modal, Button, Input, DatePicker, Alert, Spin } from 'antd';
 import {jwtDecode} from 'jwt-decode';
-import { getAppointments, updateAppointment, deleteAppointment } from '../../api/appointment'; // Adjust import path as needed
+import { getAppointments, updateAppointment, deleteAppointment } from '../../api/appointment'; 
+import { getDoctorAvailability } from '../../api/users';
 import moment from 'moment';
 
 const MyAppointmentsContent = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [availableTimes, setAvailableTimes] = useState([]);
   const [error, setError] = useState('');
   const [userId, setUserId] = useState(null); 
   const [editAppointment, setEditAppointment] = useState(null); 
@@ -67,8 +69,22 @@ const MyAppointmentsContent = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleDateChange = (date) => {
+  const handleDateChange = async (date) => {
     setFormData({ ...formData, date });
+  
+    try {
+      // Fetch availability for the specific doctor
+      const times = await getDoctorAvailability(editAppointment.doctor._id);
+      
+      // Filter available times based on the selected date and isBooked status
+      const availableTimes = times.filter(slot => 
+        new Date(slot.date).toISOString().split('T')[0] === date.format('YYYY-MM-DD') && !slot.isBooked
+      );
+      
+      setAvailableTimes(availableTimes); // Set filtered available times
+    } catch (error) {
+      console.error('Error fetching available time slots:', error);
+    }
   };
 
   const handleTimeChange = (time) => {
@@ -90,12 +106,14 @@ const MyAppointmentsContent = () => {
   const handleUpdateSubmit = async () => {
     try {
       const updatedData = {
-        date: formData.date ? formData.date.format('YYYY-MM-DD') : editAppointment.date,
-        time: formData.time ? formData.time.format('HH:mm') : editAppointment.time,
+        date: formData.date ? formData.date.format('YYYY-MM-DD') : editAppointment.date, // still format the date
+        time: formData.time || editAppointment.time, // time is already a string, no need to format
         notes: formData.notes || editAppointment.notes,
       };
+      
       await updateAppointment(editAppointment._id, updatedData);
       alert('Appointment updated successfully');
+  
       // Refetch appointments after update
       const updatedAppointments = await getAppointments(userId);
       setAppointments(updatedAppointments);
@@ -104,6 +122,7 @@ const MyAppointmentsContent = () => {
       console.error('Error updating appointment:', error);
     }
   };
+  
 
   // Handle appointment delete
   const handleDeleteAppointment = async (appointmentId) => {
@@ -125,12 +144,15 @@ const MyAppointmentsContent = () => {
     return <Alert message="Error" description={error} type="error" />;
   }
 
+  // Filter out appointments with the status "completed"
+  const filteredAppointments = appointments.filter(appointment => appointment.status !== 'completed');
+
   return (
     <div>
       <h3>My Appointments</h3>
-      {appointments.length > 0 ? (
+      {filteredAppointments.length > 0 ? (
         <ul>
-          {appointments.map((appointment) => (
+          {filteredAppointments.map((appointment) => (
             <li key={appointment._id}>
               <p>Appointment ID: {appointment._id}</p>
               <p>Date: {new Date(appointment.date).toLocaleDateString()}</p>
@@ -149,34 +171,43 @@ const MyAppointmentsContent = () => {
 
       {/* Modal for Editing Appointment */}
       <Modal
-        title="Edit Appointment"
-        visible={isModalVisible}
-        onOk={handleUpdateSubmit}
-        onCancel={() => setIsModalVisible(false)}
-        okText="Update"
-      >
-        <label>Date</label>
-        <DatePicker
-          value={formData.date}
-          onChange={handleDateChange}
-          style={{ width: '100%', marginBottom: '10px' }}
-        />
-        <label>Time</label>
-        <TimePicker
-          value={formData.time}
-          onChange={handleTimeChange}
-          format="HH:mm"
-          style={{ width: '100%', marginBottom: '10px' }}
-        />
-        <label>Notes</label>
-        <Input.TextArea
-          name="notes"
-          value={formData.notes}
-          onChange={handleInputChange}
-          rows={4}
-          style={{ width: '100%' }}
-        />
-      </Modal>
+  title="Edit Appointment"
+  visible={isModalVisible}
+  onOk={handleUpdateSubmit}
+  onCancel={() => setIsModalVisible(false)}
+  okText="Update"
+>
+  <label>Date</label>
+  <DatePicker
+    value={formData.date}
+    onChange={handleDateChange}
+    style={{ width: '100%', marginBottom: '10px' }}
+  />
+
+  <label>Time</label>
+  <select name="time" value={formData.time} onChange={e => handleTimeChange(e.target.value)}>
+  <option value="">Select Time</option>
+  {availableTimes.length > 0 ? (
+    availableTimes.map(slot => (
+      <option key={slot._id} value={slot.time}>
+        {slot.time}
+      </option>
+    ))
+  ) : (
+    <option disabled>No available slots</option>
+  )}
+</select>
+
+  <label>Notes</label>
+  <Input.TextArea
+    name="notes"
+    value={formData.notes}
+    onChange={handleInputChange}
+    rows={4}
+    style={{ width: '100%' }}
+  />
+</Modal>
+
     </div>
   );
 };

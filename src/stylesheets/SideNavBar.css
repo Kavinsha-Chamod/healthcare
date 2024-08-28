@@ -5,35 +5,42 @@
   position: fixed;
   top: 0;
   left: 0;
-  background-color: #111;
-  padding-top: 20px;
+  background-color: #f4f4f4;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
   color: white;
 }
 
-.sidenav h2 {
-  padding-left: 15px;
+.sidenav-title {
+  font-size: 1.5rem;
   margin-bottom: 20px;
 }
 
-.sidenav ul {
+/* Style for sidebar menu items */
+.sidenav-menu {
   list-style-type: none;
   padding: 0;
+  margin: 0;
 }
 
-.sidenav ul li {
-  padding: 10px 15px;
-  margin: 5px 0;
+.sidenav-item {
+  margin-bottom: 10px;
+}
+
+.sidenav-button {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 1rem;
+  text-align: left;
+  width: 100%;
+  padding: 10px;
   cursor: pointer;
+  border-radius: 4px;
 }
 
-.sidenav ul li a {
-  text-decoration: none;
-  color: white;
-  display: block;
-}
-
-.sidenav ul li a:hover {
-  background-color: #575757;
+.sidenav-button:hover {
+  background-color: #ddd; /* Change background on hover */
 }
 
 .dashboard-container {
@@ -41,11 +48,9 @@
 }
 
 .dashboard-content {
-  margin-left: 250px;
+  margin-left: 300px;
   padding: 20px;
   width: 100%;
 }
 
-.sidenav ul li:hover {
-  background-color: #575757;
-}
+

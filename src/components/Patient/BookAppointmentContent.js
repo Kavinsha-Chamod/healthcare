@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { createAppointment } from '../../api/appointment';
+import { Alert, Spin } from 'antd';
+import { createAppointment, bookSlot } from '../../api/appointment';
 import { getDoctorAvailability } from '../../api/users';
 import {jwtDecode} from 'jwt-decode';
 
 const BookAppointmentContent = ({ doctorId }) => {
   const [availableTimes, setAvailableTimes] = useState([]);
+  const [dates, setDates] = useState([]);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [appointmentData, setAppointmentData] = useState({
-    patient: '', 
+    patient: '',
     doctor: doctorId,
     date: '',
     time: '',
@@ -14,29 +19,40 @@ const BookAppointmentContent = ({ doctorId }) => {
     notes: '',
   });
 
+  // Fetch doctor's available times
   useEffect(() => {
     const fetchDoctorAvailability = async () => {
       try {
         const times = await getDoctorAvailability(doctorId);
-        setAvailableTimes(times);
+
+        // Format times and ensure date is in YYYY-MM-DD format
+        const formattedTimes = times.map(slot => ({
+          ...slot,
+          date: new Date(slot.date).toISOString().split('T')[0],
+        }));
+
+        setAvailableTimes(formattedTimes);
+
+        // Get unique dates
+        const uniqueDates = [...new Set(formattedTimes.map(slot => slot.date))];
+        setDates(uniqueDates);
       } catch (error) {
         console.error('Error fetching doctor availability:', error);
       }
     };
+
     fetchDoctorAvailability();
 
+    // Set the patient ID from the token
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        // Use userId from the token instead of patientId
         if (decoded && decoded.id) {
           setAppointmentData((prevData) => ({
             ...prevData,
-            patient: decoded.id, // Set patient ID from userId
+            patient: decoded.id,
           }));
-          console.log('Patient ID set from token:', decoded.id);
-          console.log('Doctor ID :', doctorId);
         } else {
           console.error('userId not found in token');
         }
@@ -46,51 +62,107 @@ const BookAppointmentContent = ({ doctorId }) => {
     }
   }, [doctorId]);
 
+  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setAppointmentData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await createAppointment(appointmentData);
-      alert('Appointment created successfully');
-      // Clear the form after submission
-      setAppointmentData({
-        ...appointmentData,
-        date: '',
-        time: '',
-        notes: '',
-      });
-      window.location.reload();
-    } catch (error) {
-      console.error('Error creating appointment:', error);
+    if (name === 'date') {
+      setSelectedDate(value);
+      setAppointmentData((prevData) => ({
+        ...prevData,
+        date: value,
+        time: '', // Reset time when date changes
+      }));
     }
   };
 
+  // Handle form submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await createAppointment(appointmentData);
+      await bookSlot(doctorId, selectedDate, appointmentData.time);
+
+      // Mark the time slot as booked and show success message
+      setAvailableTimes((prevTimes) =>
+        prevTimes.map(slot =>
+          slot.date === selectedDate && slot.time === appointmentData.time
+            ? { ...slot, isBooked: true }
+            : slot
+        )
+      );
+      setAlertMessage({ type: 'success', message: 'Appointment created successfully' });
+
+      // Clear form data
+      setAppointmentData({
+        patient: appointmentData.patient,
+        doctor: doctorId,
+        date: '',
+        time: '',
+        status: 'pending',
+        notes: '',
+      });
+      setSelectedDate('');
+    } catch (error) {
+      setAlertMessage({ type: 'error', message: 'Error creating appointment' });
+      console.error('Error creating appointment:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter available times to exclude booked slots
+  const filteredTimes = availableTimes.filter(slot => slot.date === selectedDate && !slot.isBooked);
+
   return (
-    <form onSubmit={handleSubmit}>
-      <label>Date</label>
-      <input type="date" name="date" value={appointmentData.date} onChange={handleChange} required />
-      <label>Available Times</label>
-      <select name="time" value={appointmentData.time} onChange={handleChange} required>
-        <option value="">Select Time</option>
-        {availableTimes.map((slot) => (
-          <option key={slot._id} value={slot.time}>
-            {slot.date} - {slot.time}
-          </option>
-        ))}
-      </select>
-      <textarea
-        name="notes"
-        value={appointmentData.notes}
-        onChange={handleChange}
-        placeholder="Description"
-        required
-      />
-      <button type="submit">Create Appointment</button>
-    </form>
+    <div>
+      {alertMessage && (
+        <Alert
+          message={alertMessage.message}
+          type={alertMessage.type}
+          closable
+          onClose={() => setAlertMessage(null)}
+          style={{ marginBottom: 20 }}
+        />
+      )}
+
+      {loading && <Spin tip="Creating appointment..." />}
+
+      {!loading && (
+        <form onSubmit={handleSubmit}>
+          <label>Date</label>
+          <select name="date" value={selectedDate} onChange={handleChange} required>
+            <option value="">Select Date</option>
+            {dates.map(date => (
+              <option key={date} value={date}>
+                {date}
+              </option>
+            ))}
+          </select>
+
+          <label>Available Times</label>
+          <select name="time" value={appointmentData.time} onChange={handleChange} required disabled={!selectedDate}>
+            <option value="">Select Time</option>
+            {selectedDate && filteredTimes.map(slot => (
+              <option key={slot._id} value={slot.time}>
+                {slot.time}
+              </option>
+            ))}
+          </select>
+
+          <textarea
+            name="notes"
+            value={appointmentData.notes}
+            onChange={handleChange}
+            placeholder="Description"
+            required
+          />
+          
+          <button type="submit" disabled={!appointmentData.time}>Create Appointment</button>
+        </form>
+      )}
+    </div>
   );
 };
 
