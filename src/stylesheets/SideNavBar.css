@@ -57,6 +57,10 @@
   color: #ffffff;
 }
 
+.logout{
+  margin-top: 160%;
+}
+
 .sidenav-button:hover {
   background-color: #ddd; 
 }

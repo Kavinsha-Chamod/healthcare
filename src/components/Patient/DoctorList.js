@@ -31,9 +31,11 @@ const DoctorList = () => {
     setIsModalVisible(false); // Hide the modal when closed
   };
 
+
   return (
     <div className="doctor-list-container">
     <h2>Available Doctors</h2>
+    {doctors.length > 0 ? (
     <ul className="doctor-list">
       {doctors.map((doctor) => (
         <li key={doctor._id} onClick={() => handleDoctorClick(doctor)}>
@@ -42,6 +44,9 @@ const DoctorList = () => {
         </li>
       ))}
     </ul>
+    ) : (
+      <p className="no-appointments">No doctors available</p>
+    )}
 
       {/* Modal for booking appointment */}
       <Modal

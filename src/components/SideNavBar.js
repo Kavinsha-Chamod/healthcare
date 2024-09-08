@@ -2,21 +2,20 @@ import React from 'react';
 import '../stylesheets/SideNavBar.css';
 import { Modal, message } from 'antd';
 
-const SideNavBar = ({ role, setSelectedContent }) => {
+const SideNavBar = ({ role, setSelectedContent }) =>{ 
   const handleLogout = () => {
     localStorage.removeItem('token');
     window.location.reload();
   }
 
-  const handleLogoutUser = (appointmentId) => {
+  const handleLogoutUser = () => {
     Modal.confirm({
       title: 'Are you sure you want to logout?',
       okText: 'Yes, Logout',
       cancelText: 'No',
       onOk: async () => {
         try {
-          await handleLogout();
-          message.success('Appointment cancelled successfully');
+          handleLogout();
         } catch (error) {
           console.error('Try again!:', error);
         }
@@ -27,7 +26,7 @@ const SideNavBar = ({ role, setSelectedContent }) => {
   return (
     <div className="sidenav">
       <h2 className="sidenav-title">
-        {role === 'doctor' ? 'Doctor Dashboard' : 'Patient Dashboard'}
+        {role === 'doctor' ? 'Welcome Doctor !' : 'Welcome !'}
       </h2>
       <ul className="sidenav-menu">
         {role === 'doctor' ? (
@@ -47,7 +46,7 @@ const SideNavBar = ({ role, setSelectedContent }) => {
               Appointment History
               </button>
             </li>
-            <li className="sidenav-item">
+            <li className="sidenav-item logout">
               <button className="sidenav-buttonL" onClick={() => handleLogoutUser()}>
                 Logout
               </button>
@@ -61,16 +60,16 @@ const SideNavBar = ({ role, setSelectedContent }) => {
               </button>
             </li>
             <li className="sidenav-item">
-              <button className="sidenav-button" onClick={() => setSelectedContent('medical-records')}>
-                Appointment History
-              </button>
-            </li>
-            <li className="sidenav-item">
               <button className="sidenav-button" onClick={() => setSelectedContent('book-appointment')}>
                 Book Appointment
               </button>
             </li>
             <li className="sidenav-item">
+              <button className="sidenav-button" onClick={() => setSelectedContent('medical-records')}>
+                Appointment History
+              </button>
+            </li>
+            <li className="sidenav-item logout">
               <button className="sidenav-buttonL" onClick={() => handleLogoutUser()}>
                 Logout
               </button>

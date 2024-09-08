@@ -1,9 +1,7 @@
-// PatientDashboard.js
 import React, { useState } from 'react';
 import SideNavBar from '../components/SideNavBar';
 import MyAppointmentsContent from '../components/Patient/MyAppointmentsContent';
 import MedicalRecordsContent from '../components/Patient/MedicalRecordsContent';
-import BookAppointmentContent from '../components/Patient/BookAppointmentContent';
 import ContactDoctorContent from '../components/Patient/ContactDoctorContent';
 import DoctorList from '../components/Patient/DoctorList';
 

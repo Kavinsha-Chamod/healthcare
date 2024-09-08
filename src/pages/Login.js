@@ -44,18 +44,6 @@ function Login() {
   return (
     <div className="container">
       <h2>{step === 1 ? 'Login' : 'Verify MFA'}</h2>
-      
-      {/* Error Alert */}
-      {/* {error && (
-        <Alert
-          message="Error"
-          description={error}
-          type="error"
-          showIcon
-          style={{ marginBottom: '16px' }}
-        />
-      )} */}
-
       <form onSubmit={step === 1 ? handleLogin : handleMFA}>
         {step === 1 && (
           <>
