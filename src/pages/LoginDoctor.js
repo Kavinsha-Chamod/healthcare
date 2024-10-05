@@ -44,7 +44,7 @@ const DoctorLogin = () => {
 
   return (
     <div className="container">
-      <h2>{step === 1 ? 'Doctor Login' : 'Verify MFA Code'}</h2>
+      <h2>{step === 1 ? 'Doctor Login' : 'Verify OTP Code'}</h2>
       <form onSubmit={step === 1 ? handleDoctorLogin : handleMFADoctor}>
         {step === 1 && (
           <>
@@ -70,7 +70,7 @@ const DoctorLogin = () => {
 
         {step === 2 && (
           <div>
-            <label>MFA Code:</label>
+            <label>OTP Code:</label>
             <Input
               type="text"
               value={mfaCode}

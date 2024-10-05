@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Alert } from 'antd'; // Import Ant Design components
+import { Button, Alert } from 'antd'; 
 import { registerUser } from '../api/users';
-import '../stylesheets/Register.css'; // Import the CSS file
+import '../stylesheets/Register.css';
 
 function Register() {
   const [firstName, setFirstName] = useState('');

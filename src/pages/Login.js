@@ -43,7 +43,7 @@ function Login() {
 
   return (
     <div className="container">
-      <h2>{step === 1 ? 'Login' : 'Verify MFA'}</h2>
+      <h2>{step === 1 ? 'Login' : 'Verify OTP Code'}</h2>
       <form onSubmit={step === 1 ? handleLogin : handleMFA}>
         {step === 1 && (
           <>
@@ -70,7 +70,7 @@ function Login() {
 
         {step === 2 && (
           <div>
-            <label>MFA Code:</label>
+            <label>OTP Code:</label>
             <Input
               type="text"
               value={mfaCode}
